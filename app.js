@@ -152,7 +152,48 @@ SET
   active = ${active},
   deaths = ${deaths}
   WHERE 
-  district_id = ${districtId};`;
+  district_id = ${districtId}`;
+
   await db.run(updateDistrictDetails);
   response.send("District Details Updated");
 });
+
+// Returns the statistics of total cases, cured, active, deaths of a specific state based on state ID (API 7)
+
+app.get("/states/:stateId/stats/", async (request, response) => {
+  const { stateId } = request.params;
+  const stateQuery = `
+    SELECT 
+     SUM(cases),
+     SUM(cured),
+     SUM(active),
+     SUM(deaths)
+     FROM 
+     district 
+     WHERE 
+     state_id = ${stateId}`;
+  const stateDetails = await db.get(stateQuery);
+  response.send({
+    totalCases: stateDetails["SUM(cases)"],
+    totalCured: stateDetails["SUM(cured)"],
+    totalActive: stateDetails["SUM(active)"],
+    totalDeaths: stateDetails["SUM(deaths)"],
+  });
+});
+
+// Returns an object containing the state name of a district based on the district ID (API 8)
+
+app.get("/districts/:districtId/details/", async (request, response) => {
+  const { districtId } = request.params;
+  const stateQuery = ` 
+    SELECT 
+    state_name 
+    FROM 
+    state JOIN district
+    ON state.state_id = district.state_id
+    WHERE
+    district.district_id = ${districtId}`;
+  const stateName = await db.get(stateQuery);
+  response.send(convertDbObjectToResponseObject(stateName));
+});
+module.exports = app;
