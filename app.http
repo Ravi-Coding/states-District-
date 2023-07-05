@@ -43,5 +43,5 @@ Content-Type: application/json
 
 GET http://localhost:3003/states/8/stats/
 
-### 
+### (API 8)
 GET http://localhost:3003/districts/5/details/

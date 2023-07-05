@@ -72,7 +72,6 @@ app.get("/states/:stateId/", async (request, response) => {
 });
 
 // Create a district in the district table, district_id is auto-incremented(API 3)
-
 app.post("/districts/", async (request, response) => {
   const newDistrict = request.body;
 
